@@ -3,10 +3,15 @@ const https = require('https');
 const http = require('http');
 const { URL } = require('url');
 const path = require('path');
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json({ limit: '100kb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+// Support both common upload layouts: public/index.html OR index.html at project root.
+const publicDir = fs.existsSync(path.join(__dirname, 'public', 'index.html'))
+  ? path.join(__dirname, 'public')
+  : __dirname;
+app.use(express.static(publicDir));
 
 // Fetch only from known public suggestion endpoints; no arbitrary URL fetching.
 function getJson(url, timeoutMs = 9000) {
@@ -114,5 +119,11 @@ app.post('/api/scrape', async (req, res) => {
     send('error', { message: 'حدث خطأ أثناء الاستخراج.' });
   } finally { if (!res.writableEnded) res.end(); }
 });
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('*', (req, res) => {
+  const publicIndex = path.join(__dirname, 'public', 'index.html');
+  const rootIndex = path.join(__dirname, 'index.html');
+  const indexPath = fs.existsSync(publicIndex) ? publicIndex : rootIndex;
+  if (!fs.existsSync(indexPath)) return res.status(500).send('Frontend not found. Upload public/index.html or index.html.');
+  res.sendFile(indexPath);
+});
 app.listen(PORT, () => console.log(`FRS Private Keyword listening on ${PORT}`));
