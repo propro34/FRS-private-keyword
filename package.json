@@ -1,9 +1,9 @@
 {
   "name": "frs-private-keyword",
-  "version": "1.0.0",
-  "description": "FRS Private Keyword deep keyword research web app",
+  "version": "2.0.0",
+  "description": "FRS Private Keyword - deep keyword discovery and real web verification filter",
   "main": "server.js",
-  "scripts": {"start": "node server.js"},
+  "scripts": {"start": "node server.js" },
   "engines": {"node": ">=18"},
   "dependencies": {"express": "^4.21.2"}
 }
