@@ -1,9 +1,15 @@
 {
   "name": "frs-private-keyword",
-  "version": "2.0.0",
-  "description": "FRS Private Keyword - deep keyword discovery and real web verification filter",
+  "version": "2.1.0",
+  "description": "FRS Private Keyword - deep keyword discovery and strict private web verification filter",
   "main": "server.js",
-  "scripts": {"start": "node server.js" },
-  "engines": {"node": ">=18"},
-  "dependencies": {"express": "^4.21.2"}
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
 }
