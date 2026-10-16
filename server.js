@@ -295,4 +295,4 @@ app.get('*', (req, res) => {
   res.sendFile(f);
 });
 
-app.listen(PORT, () => console.log(`FRS Private Keyword v2.1 listening on ${PORT}`));
+app.listen(PORT, () => console.log(`FRS Private Keyword v2.2 listening on ${PORT}`));

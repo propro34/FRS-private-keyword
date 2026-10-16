@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0a0a0f">
-<title>FRS Private Keyword v2.1</title>
+<title>FRS Private Keyword v2.2</title>
 <style>
 :root{--bg:#08080d;--panel:#111119;--panel2:#171720;--red:#ff3548;--red2:#b20e28;--text:#f7f7fb;--muted:#a0a0b0;--line:#2a2a37;--green:#42e6a4;--amber:#ffc76a;--blue:#8da8ff}
 *{box-sizing:border-box}
@@ -98,20 +98,20 @@ td.verify{white-space:nowrap;font-size:11px}
       <div class="logo">F</div>
       <div>
         <h1>FRS <span>PRIVATE KEYWORD</span></h1>
-        <div class="sub">DEEP DISCOVERY · WEB VERIFICATION · STRICT PRIVATE FILTER</div>
+        <div class="sub">DEEP DISCOVERY · WEB VERIFICATION · LOW-SPREAD PRIVATE FILTER</div>
       </div>
     </div>
     <div class="topright">
       <span class="badge">● LIVE RESULTS</span>
-      <span class="badge version">VERSION 2.1 · RED CORE</span>
+      <span class="badge version">VERSION 2.2 · PRIVATE WEB</span>
     </div>
   </header>
 
   <section class="hero">
     <div class="heroIcon">⌕</div>
     <div>
-      <strong>استخراج أعمق، ثم تحقق حقيقي من الويب + فلتر صارم</strong>
-      <p>استخرج اقتراحات الكلمات من المحركات، وبعدها افحص هل العبارة تظهر فعلاً في صفحات الويب. الفلتر الصارم يشترط 3 كلمات على الأقل + كلمتين إضافيتين وصفية ويستبعد العبارات العامة (app / download / login / premium...).</p>
+      <strong>كلمات حقيقية على الويب · قليلة الانتشار · Private</strong>
+      <p>استخرج الاقتراحات، تحقق أن العبارة موجودة فعلاً في صفحات وروابط الويب، ثم فلتر Private الجديد يبقي فقط الكلمات ذات الانتشار الضعيف (نتائج قليلة) ويستبعد العامة جداً.</p>
     </div>
   </section>
 
@@ -173,8 +173,8 @@ td.verify{white-space:nowrap;font-size:11px}
   <section class="modal" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
     <div class="modalhead">
       <div>
-        <h2 id="filterTitle">✦ Private Filter <span style="color:var(--red)">/ STRICT</span></h2>
-        <p>الفلتر الصارم يشترط: وجود نتائج ويب + 3 كلمات على الأقل + كلمتين وصفية إضافيتين خارج الكلمة الأساسية + استبعاد العبارات العامة (app, download, login, premium...). الكلمات التي تعذّر فحصها لا تُعتبر مؤكدة.</p>
+        <h2 id="filterTitle">✦ Private Filter <span style="color:var(--red)">/ LOW SPREAD</span></h2>
+        <p>الفلتر الجديد: الكلمة يجب أن تكون موجودة فعلاً في صفحات الويب (روابط حقيقية)، مع انتشار ضعيف (عدد نتائج منخفض). يُستبعد العام جداً. الترتيب حسب قلة الانتشار + التخصّص.</p>
       </div>
       <button class="close" id="closeX" aria-label="إغلاق">×</button>
     </div>
@@ -192,9 +192,9 @@ td.verify{white-space:nowrap;font-size:11px}
       <button class="btn ghost" id="copyFiltered">نسخ النتائج</button>
     </div>
     <div id="filterStatus" class="modalstatus">جاهز لفحص الكلمات من الويب.</div>
-    <label class="field-label" for="filtered">النتائج المرشحة (الكلمات فقط)</label>
-    <textarea id="filtered" class="filterlist" spellcheck="false" placeholder="ستظهر هنا الكلمات التي اجتازت الفلتر الصارم…"></textarea>
-    <div class="notice">تنبيه مهم: العثور على صفحة يثبت أن العبارة موجودة على الويب، وليس أنها قليلة البحث. حجم البحث الشهري الحقيقي يحتاج بيانات من مزوّد كلمات مفتاحية. هذا الإصدار لا يختلق أرقاماً؛ يستخدم إشارات SERP كترتيب تقديري فقط.</div>
+    <label class="field-label" for="filtered">النتائج Private — موجودة في الويب · قليلة الانتشار</label>
+    <textarea id="filtered" class="filterlist" spellcheck="false" placeholder="ستظهر هنا الكلمات التي اجتازت فلتر الانتشار الضعيف (Private)…"></textarea>
+    <div class="notice">تنبيه: الفلتر يعتمد على وجود صفحات/روابط حقيقية + قلة عدد النتائج كمؤشر لانتشار ضعيف. هذا ليس حجم بحث شهري رسمي من Google؛ ترتيب تقديري من إشارات الويب.</div>
     <div class="filterActions">
       <button class="btn wide" id="closeModal">العودة للجدول</button>
     </div>
@@ -216,280 +216,16 @@ let filterAbort = false;
 let filterRunning = false;
 let filterResults = [];
 
-// كلمات عامة يتم استبعادها من النتائج الخاصة
+// كلمات عامة جداً — تُستبعد من Private
 const BANNED = new Set([
   'app','apps','download','downloads','login','logins','premium','free','online',
   'website','websites','site','sites','official','review','reviews','best','top',
   '2023','2024','2025','2026','2027','how','what','where','when','why','guide',
   'tutorial','tutorials','price','prices','buy','shop','store','stores','apk',
-  'ios','android','windows','mac','pc','iphone','ipad','samsung','google',
-  'youtube','facebook','instagram','twitter','tiktok','netflix','spotify',
-  'watch','full','movie','movies','video','videos','stream','streaming',
-  'hd','4k','1080p','720p','mp4','mkv','torrent','crack','cracked','keygen',
-  'serial','license','licence','trial','demo','pro','plus','max','ultra'
+  'ios','android','windows','mac','pc','iphone','ipad','watch','full','movie',
+  'movies','video','videos','stream','streaming','hd','4k','mp4','torrent','crack',
+  'cracked','keygen','serial','license','trial','demo','pro','plus','http','https','www'
 ]);
-
-function setStatus(t, live = false) {
-  $('status').textContent = t;
-  $('status').className = 'status' + (live ? ' live' : '');
-}
-
-function chosen() {
-  return [...document.querySelectorAll('.engine input:checked')].map(x => x.value);
-}
-
-function updateStats() {
-  $('count').textContent = words.length.toLocaleString();
-  $('requests').textContent = requests.toLocaleString();
-  $('verifiedCount').textContent = [...verifyByWord.values()].filter(x => x.verified === true).length.toLocaleString();
-}
-
-function statusTag(w) {
-  const v = verifyByWord.get(w);
-  if (!v) return '<span class="tag">لم يُفحص</span>';
-  if (v.verified === true) return '<span class="tag ok">موجود ✓</span>';
-  if (v.verified === false) return '<span class="tag no">لا نتائج</span>';
-  return '<span class="tag wait">تعذّر الفحص</span>';
-}
-
-function appendRow(word, source, n) {
-  const tbody = $('rows');
-  if (words.length === 1) tbody.innerHTML = '';
-  const tr = document.createElement('tr');
-  tr.dataset.word = word;
-  const num = document.createElement('td');
-  num.className = 'num';
-  num.textContent = n;
-  const kw = document.createElement('td');
-  kw.className = 'keyword';
-  kw.textContent = word;
-  const src = document.createElement('td');
-  src.className = 'source';
-  src.textContent = source;
-  const ver = document.createElement('td');
-  ver.className = 'verify';
-  ver.innerHTML = statusTag(word);
-  tr.append(num, kw, src, ver);
-  tbody.append(tr);
-}
-
-function render() {
-  const tbody = $('rows');
-  tbody.innerHTML = '';
-  if (!words.length) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty">لا توجد نتائج بعد.</td></tr>';
-    updateStats();
-    return;
-  }
-  words.forEach((w, i) => appendRow(w, sourceByWord.get(w) || '—', i + 1));
-  updateStats();
-}
-
-function refreshWordStatus(w) {
-  const row = [...$('rows').querySelectorAll('tr')].find(r => r.dataset.word === w);
-  if (row) row.cells[3].innerHTML = statusTag(w);
-  updateStats();
-}
-
-function setBusy(b) {
-  $('start').disabled = b;
-  $('stop').disabled = !b;
-  $('state').textContent = b ? 'يبحث…' : (finished ? 'انتهى' : 'جاهز');
-}
-
-$('start').onclick = async () => {
-  const keyword = $('keyword').value.trim();
-  const engines = chosen();
-  if (!keyword) { setStatus('اكتب كلمة مفتاحية أولاً.'); return; }
-  if (!engines.length) { setStatus('اختار محرك بحث واحداً على الأقل.'); return; }
-
-  if (controller) controller.abort();
-  controller = new AbortController();
-  words = [];
-  wordKeys.clear();
-  sourceByWord.clear();
-  verifyByWord.clear();
-  requests = 0;
-  finished = false;
-  render();
-  setBusy(true);
-  setStatus('جارٍ التوسّع من اقتراحات المحركات…', true);
-
-  try {
-    const response = await fetch('/api/scrape', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ keyword, engines }),
-      signal: controller.signal
-    });
-
-    if (!response.ok) {
-      const d = await response.json().catch(() => ({}));
-      throw Error(d.error || 'تعذّر بدء البحث');
-    }
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const blocks = buffer.split('\n\n');
-      buffer = blocks.pop();
-
-      for (const block of blocks) {
-        const ev = (block.match(/^event: (.+)$/m) || [])[1];
-        const line = (block.match(/^data: (.+)$/m) || [])[1];
-        if (!ev || !line) continue;
-        let d;
-        try { d = JSON.parse(line); } catch { continue; }
-
-        if (ev === 'keyword') {
-          const key = d.keyword.toLocaleLowerCase();
-          if (!wordKeys.has(key)) {
-            wordKeys.add(key);
-            words.push(d.keyword);
-            sourceByWord.set(d.keyword, d.source);
-            appendRow(d.keyword, d.source, words.length);
-            updateStats();
-          }
-        } else if (ev === 'progress') {
-          requests = d.requests || d.processed || requests;
-          updateStats();
-          setStatus(`تقدّم البحث: ${d.processed} معالجة · ${d.pending} في الانتظار · ${d.found} كلمة فريدة`, true);
-        } else if (ev === 'status') {
-          setStatus(d.message || 'حالة البحث تغيّرت.', d.state === 'running');
-        } else if (ev === 'done') {
-          finished = true;
-          setBusy(false);
-          requests = d.requests || requests;
-          updateStats();
-          setStatus(`${d.message} إجمالي الكلمات: ${d.total}.`);
-          if (d.errors && Object.keys(d.errors).length) {
-            setStatus(`اكتمل البحث مع تعذّر بعض المصادر: ${Object.keys(d.errors).join(', ')}. النتائج وصلت وبقيت محفوظة.`);
-          }
-        }
-      }
-    }
-
-    if (!finished) {
-      setBusy(false);
-      setStatus('انقطع الاتصال. الكلمات التي وصلت بقيت محفوظة.');
-    }
-  } catch (e) {
-    setBusy(false);
-    if (e.name !== 'AbortError') setStatus(e.message || 'فشل الاتصال بالسيرفر.');
-  }
-};
-
-$('stop').onclick = () => {
-  controller?.abort();
-  finished = true;
-  setBusy(false);
-  setStatus('أوقفت الاستخراج. الكلمات التي وصلت بقيت محفوظة في الجدول.');
-};
-
-function plain(list = words) {
-  return list.join('\n');
-}
-
-async function copyText(text) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.append(ta);
-    ta.select();
-    document.execCommand('copy');
-    ta.remove();
-  }
-  setStatus('تم النسخ بدون أرقام الجدول.');
-}
-
-function downloadText(text, name) {
-  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1200);
-}
-
-$('copy').onclick = () => copyText(plain());
-$('save').onclick = () => {
-  if (!words.length) return setStatus('ما كاش كلمات للحفظ.');
-  downloadText(plain(), 'FRS_Private_Keywords.txt');
-};
-$('clear').onclick = () => {
-  controller?.abort();
-  filterController?.abort();
-  words = [];
-  wordKeys.clear();
-  sourceByWord.clear();
-  verifyByWord.clear();
-  requests = 0;
-  finished = false;
-  filterResults = [];
-  setBusy(false);
-  render();
-  setStatus('تم مسح الجدول.');
-};
-
-async function verifyBatch(batch, signal) {
-  const r = await fetch('/api/verify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ keywords: batch }),
-    signal
-  });
-  const d = await r.json();
-  if (!r.ok) throw Error(d.error || 'تعذّر التحقق');
-  return d.results || [];
-}
-
-$('verifyAll').onclick = async () => {
-  if (!words.length) return setStatus('استخرج كلمات أولاً ثم تحقق منها.');
-  const list = words.filter(w => !verifyByWord.has(w));
-  if (!list.length) return setStatus('تم فحص كل الكلمات الموجودة بالفعل.');
-
-  setStatus('جارٍ التحقق من ظهور الكلمات في نتائج الويب…', true);
-  filterController = new AbortController();
-  let checked = 0;
-
-  try {
-    for (let i = 0; i < list.length; i += 20) {
-      if (filterController.signal.aborted) break;
-      const out = await verifyBatch(list.slice(i, i + 20), filterController.signal);
-      out.forEach(x => {
-        verifyByWord.set(x.keyword, x);
-        refreshWordStatus(x.keyword);
-      });
-      checked += out.length;
-      setStatus(`التحقق من الويب: ${checked}/${list.length} كلمة.`, true);
-    }
-    setStatus(`اكتمل التحقق من ${checked} كلمة. النتائج التي تعذّر فحصها تبقى غير مؤكدة.`);
-  } catch (e) {
-    if (e.name !== 'AbortError') setStatus('توقف التحقق: ' + e.message);
-  }
-};
-
-function openFilter() {
-  $('modalback').style.display = 'flex';
-  $('filterInputCount').textContent = words.length.toLocaleString();
-  $('filterChecked').textContent = verifyByWord.size.toLocaleString();
-  $('filterVerified').textContent = [...verifyByWord.values()].filter(x => x.verified === true).length.toLocaleString();
-  $('filterOutputCount').textContent = filterResults.length.toLocaleString();
-  $('filterStatus').textContent = 'جاهز لفحص الكلمات من الويب.';
-  $('progressFill').style.width = '0%';
-}
-
-$('private').onclick = openFilter;
-$('closeModal').onclick = $('closeX').onclick = () => { $('modalback').style.display = 'none'; };
-$('modalback').onclick = e => { if (e.target === $('modalback')) $('modalback').style.display = 'none'; };
 
 function normalizeTokens(str) {
   return (str || '')
@@ -499,37 +235,57 @@ function normalizeTokens(str) {
     .match(/[\p{L}\p{N}]+/gu) || [];
 }
 
-function wordScore(item, seed) {
+/**
+ * سكور Private الجديد:
+ * - أقل عدد نتائج ويب = أقل انتشار = أفضل
+ * - أكثر تخصيص (كلمات إضافية) = أفضل
+ * - عبارة أطول قليلاً = أفضل
+ * - تطابق عناوين كثير = انتشار أقوى = أسوأ قليلاً
+ */
+function privateSpreadScore(item, seed) {
   const toks = normalizeTokens(item.keyword);
   const seedTokens = normalizeTokens(seed);
   const extra = toks.filter(t => !seedTokens.includes(t) && t.length > 2).length;
-  const exact = item.exactTitleMatches || 0;
-  return extra * 3 + Math.min(toks.length, 8) * 1.2 + Math.min(item.keyword.length / 24, 2) - exact * 2.5 - (item.resultsFound || 0) * 0.08;
+  const found = Number(item.resultsFound) || 0;
+  const exact = Number(item.exactTitleMatches) || 0;
+  // قلة النتائج أهم إشارة للانتشار الضعيف
+  const rarity = Math.max(0, 12 - found * 1.8);
+  return rarity + extra * 2.5 + Math.min(toks.length, 6) * 0.8 + Math.min(item.keyword.length / 30, 2) - exact * 1.2;
 }
 
 /**
- * Private Filter الصارم (v2.1):
- * - verified === true
- * - على الأقل 3 كلمات
- * - على الأقل كلمتين إضافيتين (غير موجودة في الكلمة الأساسية وطولها > 2)
- * - لا تحتوي على كلمات عامة محظورة (app, download, login, premium...)
+ * فلتر Private الجديد (v2.2):
+ * 1) موجودة فعلاً في الويب (verified + فيها نتائج/روابط صفحات)
+ * 2) انتشار ضعيف: عدد النتائج قليل (1..7)
+ * 3) عبارة حقيقية: كلمتين على الأقل، طول مناسب
+ * 4) ليست عامة (banned)
+ * 5) فيها شيء من التخصّص خارج البذرة إن أمكن
  */
-function isStrictPrivate(item, seed) {
+function isPrivateLowSpread(item, seed) {
   if (!item || item.verified !== true) return false;
+  const found = Number(item.resultsFound);
+  if (!Number.isFinite(found) || found < 1) return false;
+  // قليلة الانتشار: نتائج قليلة على SERP
+  if (found > 7) return false;
 
-  const toks = normalizeTokens(item.keyword);
-  if (toks.length < 3) return false;
-  if (item.keyword.trim().length < 10) return false;
+  // يجب أن تكون هناك صفحات/روابط حقيقية من التحقق
+  const hasPages = Array.isArray(item.results) && item.results.length > 0;
+  if (!hasPages && found < 1) return false;
 
+  const kw = String(item.keyword || '').trim();
+  if (kw.length < 6) return false;
+  const toks = normalizeTokens(kw);
+  if (toks.length < 2) return false;
+  if (toks.some(t => BANNED.has(t))) return false;
+
+  // تفضيل التخصّص: إن كانت البذرة قصيرة، نطلب كلمة إضافية
   const seedTokens = normalizeTokens(seed);
   const extra = toks.filter(t => !seedTokens.includes(t) && t.length > 2);
-  if (extra.length < 2) return false;
-
-  // استبعاد الكلمات العامة
-  if (toks.some(t => BANNED.has(t))) return false;
+  if (seedTokens.length && toks.length >= 3 && extra.length < 1) return false;
 
   return true;
 }
+
 
 function paintFilter() {
   filterResults.sort((a, b) => b.score - a.score);
@@ -581,8 +337,8 @@ $('startFilter').onclick = async () => {
       // طبّق الفلتر الصارم على كل الكلمات اللي اتأكدت
       filterResults = words
         .map(w => verifyByWord.get(w))
-        .filter(x => isStrictPrivate(x, seed))
-        .map(x => ({ ...x, score: wordScore(x, seed) }));
+        .filter(x => isPrivateLowSpread(x, seed))
+        .map(x => ({ ...x, score: privateSpreadScore(x, seed) }));
 
       paintFilter();
       $('filterChecked').textContent = verifyByWord.size.toLocaleString();
@@ -594,10 +350,10 @@ $('startFilter').onclick = async () => {
     if (!filterAbort) {
       filterResults = words
         .map(w => verifyByWord.get(w))
-        .filter(x => isStrictPrivate(x, seed))
-        .map(x => ({ ...x, score: wordScore(x, seed) }));
+        .filter(x => isPrivateLowSpread(x, seed))
+        .map(x => ({ ...x, score: privateSpreadScore(x, seed) }));
       paintFilter();
-      $('filterStatus').textContent = `اكتملت العملية. ${filterResults.length} عبارة اجتازت الفلتر الصارم.`;
+      $('filterStatus').textContent = `اكتملت العملية. ${filterResults.length} عبارة اجتازت فلتر الانتشار الضعيف (Private).`;
     } else {
       $('filterStatus').textContent = `توقفت العملية. احتفظنا بـ ${filterResults.length} نتيجة وصلت حتى الآن.`;
     }
