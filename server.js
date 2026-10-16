@@ -10,8 +10,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: '500kb' }));
 
-app.get('/health', (_req, res) => res.json({ ok: true, version: '2.3.0' }));
-app.get('/api/health', (_req, res) => res.json({ ok: true, version: '2.3.0' }));
+app.get('/health', (_req, res) => res.json({ ok: true, version: '2.4.0' }));
+app.get('/api/health', (_req, res) => res.json({ ok: true, version: '2.4.0' }));
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const PUBLIC_INDEX = path.join(PUBLIC_DIR, 'index.html');
@@ -291,4 +291,4 @@ app.get('*', (req, res) => {
   res.sendFile(f);
 });
 
-app.listen(PORT, () => console.log(`FRS Private Keyword v2.3.0 on ${PORT}`));
+app.listen(PORT, () => console.log(`FRS Private Keyword v2.4.0 on ${PORT}`));
