@@ -174,7 +174,7 @@ td.verify{white-space:nowrap;font-size:11px}
     <div class="modalhead">
       <div>
         <h2 id="filterTitle">✦ Private Filter <span style="color:var(--red)">/ TRUE PRIVATE</span></h2>
-        <p>شرط: موجودة في الويب + نتائج قليلة (1–5) + ليست كلمة مشهورة/عامة + تخصص واضح. netflix movies وأمثالها تُرفض.</p>
+        <p>شرط: موجودة في الويب + كلمتين على الأقل + كلمة وصفية إضافية + ليست عبارة عامة (movies/free/account…). الترتيب حسب التخصص.</p>
       </div>
       <button class="close" id="closeX" aria-label="إغلاق">×</button>
     </div>
@@ -194,7 +194,7 @@ td.verify{white-space:nowrap;font-size:11px}
     <div id="filterStatus" class="modalstatus">جاهز لفحص الكلمات من الويب.</div>
     <label class="field-label" for="filtered">النتائج المرشحة (الكلمات فقط)</label>
     <textarea id="filtered" class="filterlist" spellcheck="false" placeholder="ستظهر هنا الكلمات التي اجتازت True Private…"></textarea>
-    <div class="notice">تنبيه: الفلتر يرفض العبارات الشائعة حتى لو وُجدت. يعتمد على قلة النتائج + قائمة حظر للكلمات المشهورة. ليس حجم بحث Google الرسمي.</div>
+    <div class="notice">تنبيه: الفلتر يرفض العبارات العامة (movies, series, account, free…). يبقي العبارات المتخصصة الموجودة في الويب. ليس حجم بحث Google الرسمي.</div>
     <div class="filterActions">
       <button class="btn wide" id="closeModal">العودة للجدول</button>
     </div>
@@ -506,12 +506,16 @@ function normalizeTokens(str) {
 function privateSpreadScore(item, seed) {
   const toks = normalizeTokens(item.keyword);
   const seedTokens = normalizeTokens(seed);
-  const extra = toks.filter(t => !seedTokens.includes(t) && t.length > 2 && !BANNED.has(t)).length;
-  const found = Number(item.resultsFound) || 0;
+  const extra = toks.filter(t => !seedTokens.includes(t) && t.length > 2 && !BANNED.has(t));
+  const found = Number(item.resultsFound) || 10;
   const exact = Number(item.exactTitleMatches) || 0;
-  // أقل نتائج = أفضل بكثير
-  const rarity = Math.max(0, 20 - found * 5);
-  return rarity + extra * 4 + Math.min(toks.length, 8) * 1.5 + Math.min(String(item.keyword||'').length / 20, 3) - exact * 3;
+  // التخصص أهم من عدد النتائج (لأن Bing غالباً كيرجع بزاف)
+  let score = extra.length * 5 + Math.min(toks.length, 8) * 2;
+  score += Math.min(String(item.keyword || '').length / 15, 4);
+  // تفضيل خفيف لقلة النتائج
+  score += Math.max(0, 8 - found);
+  score -= exact * 1.5;
+  return score;
 }
 
 /**
@@ -524,22 +528,20 @@ function privateSpreadScore(item, seed) {
 function isPrivateLowSpread(item, seed) {
   if (!item || item.verified !== true) return false;
   const found = Number(item.resultsFound);
-  // 1 إلى 5 نتائج — انتشار ضعيف نسبياً
-  if (!Number.isFinite(found) || found < 1 || found > 5) return false;
+  if (!Number.isFinite(found) || found < 1) return false;
   const hasPages = Array.isArray(item.results) && item.results.length > 0;
   if (!hasPages) return false;
 
   const kw = String(item.keyword || '').trim();
-  if (kw.length < 6) return false;
+  if (kw.length < 5) return false;
   const toks = normalizeTokens(kw);
-  // كلمتين على الأقل
   if (toks.length < 2) return false;
 
   const seedTokens = normalizeTokens(seed);
-  // الكلمات المحظورة تُحسب فقط خارج البذرة (ما نحظروش كلمة البحث نفسها)
+  // ممنوع: كلمات عامة خارج البذرة (movies, free, account...)
   if (toks.some(t => !seedTokens.includes(t) && BANNED.has(t))) return false;
 
-  // كلمة إضافية واحدة وصفية على الأقل خارج البذرة وغير محظورة
+  // لازم كلمة إضافية وصفية واحدة على الأقل
   const extra = toks.filter(t => !seedTokens.includes(t) && t.length > 2 && !BANNED.has(t));
   if (extra.length < 1) return false;
 
