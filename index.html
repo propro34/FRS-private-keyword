@@ -174,7 +174,7 @@ td.verify{white-space:nowrap;font-size:11px}
     <div class="modalhead">
       <div>
         <h2 id="filterTitle">✦ Private Filter <span style="color:var(--red)">/ TRUE PRIVATE</span></h2>
-        <p>شرط: موجودة في الويب + نتائج قليلة جداً (1–3) + ليست كلمة مشهورة/عامة + تخصص واضح. netflix movies وأمثالها تُرفض.</p>
+        <p>شرط: موجودة في الويب + نتائج قليلة (1–5) + ليست كلمة مشهورة/عامة + تخصص واضح. netflix movies وأمثالها تُرفض.</p>
       </div>
       <button class="close" id="closeX" aria-label="إغلاق">×</button>
     </div>
@@ -222,12 +222,11 @@ const BANNED = new Set([
   'website','websites','site','sites','official','review','reviews','best','top',
   '2023','2024','2025','2026','2027','how','what','where','when','why','guide',
   'tutorial','tutorials','price','prices','buy','shop','store','stores','apk',
-  'ios','android','windows','mac','pc','iphone','ipad','samsung','google',
-  'youtube','facebook','instagram','twitter','tiktok','netflix','spotify',
+  'ios','android','windows','mac','pc','iphone','ipad',
   'watch','full','movie','movies','video','videos','stream','streaming',
   'hd','4k','1080p','720p','mp4','mkv','torrent','crack','cracked','keygen',
   'serial','license','licence','trial','demo','pro','plus','max','ultra',
-  'account','accounts','series','season','episode','login','signin','signup',
+  'account','accounts','series','season','episode','signin','signup',
   'register','password','email','phone','support','help','contact','about',
   'home','index','blog','news','search','results','page','click','here',
   'cheap','deal','deals','coupon','code','codes','generator','hack','hacks',
@@ -525,26 +524,24 @@ function privateSpreadScore(item, seed) {
 function isPrivateLowSpread(item, seed) {
   if (!item || item.verified !== true) return false;
   const found = Number(item.resultsFound);
-  // صارم: 1 إلى 3 نتائج فقط على صفحة التحقق
-  if (!Number.isFinite(found) || found < 1 || found > 3) return false;
+  // 1 إلى 5 نتائج — انتشار ضعيف نسبياً
+  if (!Number.isFinite(found) || found < 1 || found > 5) return false;
   const hasPages = Array.isArray(item.results) && item.results.length > 0;
   if (!hasPages) return false;
 
   const kw = String(item.keyword || '').trim();
-  if (kw.length < 10) return false;
+  if (kw.length < 6) return false;
   const toks = normalizeTokens(kw);
-  // على الأقل 3 كلمات
-  if (toks.length < 3) return false;
-  // أي كلمة محظورة = رفض
-  if (toks.some(t => BANNED.has(t))) return false;
+  // كلمتين على الأقل
+  if (toks.length < 2) return false;
 
   const seedTokens = normalizeTokens(seed);
-  // لازم كلمتين وصفيتين على الأقل خارج البذرة وغير محظورتين
-  const extra = toks.filter(t => !seedTokens.includes(t) && t.length > 2 && !BANNED.has(t));
-  if (extra.length < 2) return false;
+  // الكلمات المحظورة تُحسب فقط خارج البذرة (ما نحظروش كلمة البحث نفسها)
+  if (toks.some(t => !seedTokens.includes(t) && BANNED.has(t))) return false;
 
-  // رفض إذا العبارة = البذرة + كلمة واحدة فقط
-  if (toks.length <= seedTokens.length + 1) return false;
+  // كلمة إضافية واحدة وصفية على الأقل خارج البذرة وغير محظورة
+  const extra = toks.filter(t => !seedTokens.includes(t) && t.length > 2 && !BANNED.has(t));
+  if (extra.length < 1) return false;
 
   return true;
 }
