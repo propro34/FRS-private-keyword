@@ -1,7 +1,7 @@
 {
   "name": "frs-private-keyword",
-  "version": "2.2.0",
-  "description": "FRS Private Keyword - real web keywords with low spread private filter",
+  "version": "2.3.0",
+  "description": "FRS Private Keyword - working extraction + low-spread private filter",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
   "engines": { "node": ">=18" },
